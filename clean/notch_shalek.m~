@@ -1,0 +1,161 @@
+%
+%% Data loading and normalization
+% note that immgen data appear to be standardized to have same
+% distributions across cell lines, and are in "linear" expression units,
+% and have > ~120 is 'on', <45 is 'off', according to: 
+% https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
+clear all;
+
+[A,B] = xlsread('NotchImmgen.xlsx');
+gnames = strtok(B(2:end,2)); % strtok gets rid of spaces
+cnames = strtok(B(1,4:end)); 
+dat = A(1:end,4:end);
+ligs = 1:5;
+fngs = [6 7 12];
+notches = [8:11];
+
+%dat(dat<120)=1;
+dat  = dat' ;
+dat = log(dat)
+%%
+
+%% K Means Clustering
+
+idx = kmeans(dat,6);
+
+%% EM
+
+idx = emgm(dat',6);
+idx = idx';
+
+%% AIC 
+AIC = zeros(1,20);
+GMModels = cell(1,20);
+options = statset('MaxIter',1000);
+for k = 1:20
+    GMModels{k} = fitgmdist(dat,k,'Options',options,'CovarianceType','diagonal','RegularizationValue',0.5);
+    AIC(k)= GMModels{k}.AIC;
+end
+
+[minAIC,numComponents] = min(AIC);
+numComponents
+
+AIC(AIC==0) = nan;
+plot(1:size(AIC,2),AIC)
+xlabel('k-The number of clusters')
+ylabel('AIC')
+title('The value of AIC for different number of clusters')
+
+%% OPTICS Clustering
+
+[RD,CD,order]=optics(dat,50)
+
+
+%% DBSCAN Clustering
+
+%[labs labscore] = dbscan(dat,1,1)
+%%
+%% PLOT 
+%parallelcoords(dat)
+
+%andrewsplot(dat,'group',idx)
+
+%CODE FOR SORTING ACCORDING TO ID - (WHICH MIGHT EVEN BE THE STATE!)
+datforplot=[idx dat];
+dat = sortrows(datforplot);
+idx = dat(:,1);
+dat = dat(:,2:end);
+
+%THIS IS WORKING !
+
+%%
+glyphplot(dat,'obslabels',cellstr(num2str(idx))','standardize','matrix') 
+
+
+
+%glyphplot(dat) 
+
+
+
+%% SCATTER PLOTS
+
+scatter (idx',dat(:,10),'r.')
+hold on;
+scatter (idx',dat(:,2),'go')
+hold on;
+scatter (idx',dat(:,5),'bx')
+hold on;
+scatter (idx',dat(:,12),'bo')
+hold on;
+scatter (idx',dat(:,4),'rx')
+
+
+%%
+%% EM
+obj = fitgmdist(dat,2);
+
+
+
+
+
+mindat = min(min(dat))-1;
+
+[Jag2,Dll1,Dll4,Jag1,Dll3,Rfng,Mfng,Notch4,Notch3,Notch1,Notch2,Lfng]=deal(1,2,3,4,5,6,7,8,9,10,11,12);
+
+cgo_all = clustergram(dat,'Standardize','column','RowLabels',gnames,'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
+
+cgo_all = clustergram(log(dat),'Standardize','column','RowLabels',gnames,'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
+
+cgo_receptors = clustergram(dat(notches,:),'Standardize','column','RowLabels',gnames(notches),'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
+cgo_ligs = clustergram(log(dat(ligs,:)-mindat),'Standardize','column','RowLabels',gnames(ligs),'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
+
+%% Plot the relationship between Notch1 and Notch2.
+
+figure(101);
+loglog(dat(Notch1,:),dat(Notch2,:),'.',dat(Notch1,:),dat(Notch3,:),'o',dat(Notch1,:),dat(Notch4,:),'.');
+a = axis;
+hl(1)=line([120 120],[a(3) a(4)]);
+hl(2)=line([a(1) a(2)],[120 120]);
+
+xlabel('Notch1');
+legend('Notch2','Notch3','Notch4');
+
+
+% now let's do histograms of each notch:
+
+bins = logspace(1.5,4,40);
+figure(102);
+colors = 'bgrmcyk';
+for i = 1:4
+    [yn{i},xn{i}]=hist(dat(notches(i),:),bins);
+    semilogx(xn{i},yn{i},colors(i));hold on
+end
+legend(gnames(notches))
+hold off;
+
+% now let's do histograms of fringes:
+
+figure(103);
+for i = 1:3
+    [yn{i},xn{i}]=hist(dat(fngs(i),:),bins);
+    semilogx(xn{i},yn{i},colors(i));hold on
+end
+legend(gnames(fngs))
+hold off;
+
+figure(104);
+for i = 1:5
+    [yn{i},xn{i}]=hist(dat(ligs(i),:),bins);
+    semilogx(xn{i},yn{i},colors(i));hold on
+end
+legend(gnames(ligs))
+hold off;
+
+
+
+
+%%
+
+
+
+
