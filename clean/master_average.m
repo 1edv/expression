@@ -6,7 +6,7 @@
 % https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
 clear all;
 
-[A,B] = xlsread('NotchImmgen.xlsx');
+[A,B] = xlsread('shalek.xlsx');
 gnames = strtok(B(2:end,2)); % strtok gets rid of spaces
 cnames = strtok(B(1,4:end)); 
 dat = A(1:end,4:end);
@@ -15,7 +15,35 @@ fngs = [6 7 12];
 notches = [8:11];
 
 %dat(dat<120)=1;
+
+
+if 0 % averaging for notchimmgen data
+average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
+average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
+average_dat(3,:) = (dat(6,:)) /1 ;
+average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
+average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
+
+end
+
+
+
+
+%dat(dat<120)=1;
+
+
+if 1 % averaging for shalek data
+average_dat(1,:) = (dat(7,:) + dat(13,:)) /2 ;
+average_dat(2,:) = (dat(1,:) + dat(10,:) + dat(6,:)) /3 ;
+average_dat(3,:) = (dat(11,:)) /1 ;
+average_dat(4,:) = (dat(2,:) + dat(3,:) + dat(5,:) + dat(8,:)) /4 ;
+average_dat(5,:) = (dat(14,:) + dat(11,:)) /2 ;
+
+end
+
 dat  = dat' ;
+average_dat = average_dat';
+dat = average_dat;
 %%
 
 %% K Means Clustering
@@ -24,7 +52,7 @@ idx = kmeans(dat,6);
 
 %% EM
 
-idx = emgm(dat',8);
+idx = emgm(dat',6);
 idx = idx';
 
 %% AIC 
@@ -32,7 +60,7 @@ AIC = zeros(1,20);
 GMModels = cell(1,20);
 options = statset('MaxIter',1000);
 for k = 1:20
-    GMModels{k} = fitgmdist(dat,k,'Options',options,'CovarianceType','full','RegularizationValue',0.01);
+    GMModels{k} = fitgmdist(dat,k,'Options',options,'CovarianceType','full','RegularizationValue',0.1);
     AIC(k)= GMModels{k}.AIC;
 end
 
@@ -63,13 +91,14 @@ title('The value of AIC for different number of clusters')
 %CODE FOR SORTING ACCORDING TO ID - (WHICH MIGHT EVEN BE THE STATE!)
 datforplot=[idx dat];
 dat = sortrows(datforplot);
+%dat=datforplot;
 idx = dat(:,1);
 dat = dat(:,2:end);
 
 %THIS IS WORKING !
 
 
-glyphplot(dat,'obslabels',cellstr(num2str(idx))) 
+glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
 
 
