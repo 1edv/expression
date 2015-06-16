@@ -5,7 +5,7 @@
 % and have > ~120 is 'on', <45 is 'off', according to: 
 % https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
 clear all;
-k=4;
+k=6;
 
 
 [A,B] = xlsread('shalek.xlsx');
@@ -71,7 +71,7 @@ dat = sortrows(datforplot);
 %dat=datforplot;
 idx = dat(:,1);
 dat = dat(:,2:end);
-dat=dat(:,any(~dat));
+dat=dat(:,any(dat));
 
 
 % GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
@@ -84,7 +84,7 @@ indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
 %
 rep_dat = zeros(k, size(dat,2));
 for j = 1:k
-    rep_dat(j,:) = std(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
+    rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
 end
 % GLYPH PLOT
 
@@ -95,9 +95,8 @@ end
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx)),'standardize','off') ;
 
-%glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
-
 glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+
 
 
 %glyphplot(dat) 
