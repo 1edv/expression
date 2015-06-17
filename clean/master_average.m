@@ -5,10 +5,10 @@
 % and have > ~120 is 'on', <45 is 'off', according to: 
 % https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
 clear all;
-k=4;
+k=3 ;
 
 
-[A,B] = xlsread('shalek.xlsx');
+[A,B] = xlsread('notchimmgen.xlsx');
 gnames = strtok(B(2:end,2)); % strtok gets rid of spaces
 cnames = strtok(B(1,4:end)); 
 dat = A(1:end,4:end);
@@ -21,7 +21,7 @@ dat=dat(:,any(dat));
 
 %dat(dat<120)=1;
 
-%average_dat=dat;
+average_dat=dat;
 
 if 0 % averaging for notchimmgen data
 average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
@@ -33,12 +33,12 @@ average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
 end
 
 
-
+%
 
 %dat(dat<120)=1;
 
 
-if 1 % averaging for shalek data
+if 0 % averaging for shalek data
 average_dat(1,:) = (dat(7,:) + dat(13,:)) /2 ;
 average_dat(2,:) = (dat(1,:) + dat(10,:) + dat(6,:)) /3 ;
 average_dat(3,:) = (dat(11,:)) /1 ;
@@ -52,12 +52,17 @@ average_dat = average_dat';
 dat = average_dat;
 dat = normr(dat);
 
+
+
+
+
+
 %EM
-%idx = emgm(dat',k);
-%idx = idx';
-idx = kmeans(dat,k);
+idx = emgm(dat',k);
+idx = idx';
+%idx = kmeans(dat,k);
 
-
+%
 
 % PLOT 
 
@@ -71,7 +76,9 @@ dat = sortrows(datforplot);
 %dat=datforplot;
 idx = dat(:,1);
 dat = dat(:,2:end);
-dat=dat(:,any(~dat));
+
+%dat=dat(:,any(~dat)); 
+
 
 
 % GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
@@ -84,20 +91,44 @@ indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
 %
 rep_dat = zeros(k, size(dat,2));
 for j = 1:k
-    rep_dat(j,:) = std(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
+    rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
 end
 % GLYPH PLOT
 
+
+
+
+%%Incorporating Changes in my representation as suggested by Michael
+
+strong_dat=dat;
+
+dat = zeros(size(dat,1),36);
+
+dat(:,1) = strong_dat(:,4);
+dat(:,2) = strong_dat(:,1);
+
+dat(:,9) = strong_dat(:,2);
+dat(:,10) = strong_dat(:,3);
+dat(:,11) = strong_dat(:,5);
+
+dat(:,18) = strong_dat(:,10);
+dat(:,19) = strong_dat(:,11);
+dat(:,20) = strong_dat(:,9);
+dat(:,21) = strong_dat(:,8);
+
+dat(:,28) = strong_dat(:,6);
+dat(:,29) = strong_dat(:,12);
+dat(:,30) = strong_dat(:,7);
 
 %THIS IS WORKING !
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot(dat,'obslabels',cellstr(num2str(idx)),'standardize','off') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+
+%glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
-
-glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 
 %glyphplot(dat) 
@@ -108,6 +139,7 @@ glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 
 %% AIC 
+dat=strong_dat;
 AIC = zeros(1,20);
 GMModels = cell(1,20);
 options = statset('MaxIter',1000);
