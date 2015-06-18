@@ -5,7 +5,7 @@
 % and have > ~120 is 'on', <45 is 'off', according to: 
 % https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
 clear all;
-k=3 ;
+k=4 ;
 
 
 [A,B] = xlsread('notchimmgen.xlsx');
@@ -48,8 +48,7 @@ average_dat(5,:) = (dat(14,:) + dat(11,:)) /2 ;
 end
 
 dat  = dat' ;
-average_dat = average_dat';
-dat = average_dat;
+
 dat = normr(dat);
 
 
@@ -58,9 +57,12 @@ dat = normr(dat);
 
 
 %EM
-idx = emgm(dat',k);
-idx = idx';
-%idx = kmeans(dat,k);
+%idx = emgm(dat',k);
+%idx = idx';
+
+%K Means Clustering
+
+idx = kmeans(dat,k);
 
 %
 
@@ -78,24 +80,6 @@ idx = dat(:,1);
 dat = dat(:,2:end);
 
 %dat=dat(:,any(~dat)); 
-
-
-
-% GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
-indices_change_point = [];
-for i = 1:k
-    indices_change_point = [ indices_change_point find(idx==i,1)];
-end
-indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
-
-%
-rep_dat = zeros(k, size(dat,2));
-for j = 1:k
-    rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
-end
-% GLYPH PLOT
-
-
 
 
 %%Incorporating Changes in my representation as suggested by Michael
@@ -120,13 +104,33 @@ dat(:,28) = strong_dat(:,6);
 dat(:,29) = strong_dat(:,12);
 dat(:,30) = strong_dat(:,7);
 
+
+
+% GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
+indices_change_point = [];
+for i = 1:k
+    indices_change_point = [ indices_change_point find(idx==i,1)];
+end
+indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
+
+%
+rep_dat = zeros(k, size(dat,2));
+for j = 1:k
+    rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
+end
+% GLYPH PLOT
+
+
+
+
+
 %THIS IS WORKING !
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
-%glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
@@ -159,9 +163,6 @@ title('The value of AIC for different number of clusters')
 
 
 
-%% K Means Clustering
-
-idx = kmeans(dat,4);
 
 
 
