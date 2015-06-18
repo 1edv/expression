@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Simple types: ex_basic</TITLE>
+<META NAME="description" CONTENT="Simple types: ex_basic">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="node8.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html205"
+  HREF="node11.html">Another mixture example: ex_bic</A>
+<B>Up:</B> <A NAME="tex2html201"
+  HREF="node8.html">Models with multivariate Gaussian</A>
+
+<B> Previous:</B> <A NAME="tex2html195"
+  HREF="node9.html">Data structures</A>
+<P>
+
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html206"
+  HREF="#SECTION00032100000000000000">Ergodic model with full covariance matrices</A>
+<LI><A NAME="tex2html207"
+  HREF="#SECTION00032200000000000000">Left-right HMM</A>
+<LI><A NAME="tex2html208"
+  HREF="#SECTION00032300000000000000">Mixture model</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00032000000000000000"></A>
+<A NAME="sec:ex"></A>
+<BR>
+Simple types: ex_basic
+</H2>
+The script <code>ex_basic.m</code> contains some code corresponding to low
+dimensional examples of the three basic HMM types that are handled by <TT>H2M</TT>.
+
+<P>
+
+<H3><A NAME="SECTION00032100000000000000">
+Ergodic model with full covariance matrices</A>
+</H3>
+Let <code>X</code> denote a matrix containing <code>T</code> observed vectors, the EM
+estimation of the parameters take the following form:
+<PRE>
+for i = 1:n_iter
+  [alpha, beta, logscale, dens] = hmm_fb(X, A, pi0, mu, Sigma);
+  logl(i) = log(sum(alpha(T,:))) + logscale;
+  [A, pi0] = hmm_tran(alpha, beta, dens, A, pi0);
+  [mu, Sigma] = hmm_dens(X, alpha, beta, COV_TYPE);
+end;
+</PRE>
+<code>COV_TYPE</code> is just a flag that should be set to 0 when using full
+covariance matrices and to 1 for diagonal covariance matrices.
+
+<P>
+Notice that at each step, the log-likelihood is computed from the forward
+variables using a correction term <code>logscale</code> returned by <code>hmm_fb</code>
+(for forward-backward) which contains the sum of the logarithmic scaling
+factors used during the computation of <code>alpha</code> and <code>beta</code>. In the
+present version scaling of the forward variable is performed at each time index
+<code>t = 2:T</code> (which means that each row of the <code>alpha</code> matrix sums to
+one, except the first one). This systematic scaling appears to be much safer
+when using input data with largely varying range. The backward variable is
+scaled using the same normalization factors as indicated in [<A
+ HREF="node23.html#Rabiner:HMM">4</A>]
+(using exactly the same normalization factors is important for the
+re-estimation of the coefficients of the transition matrix). Note that the mere
+suppression of the scaling procedure would lead to numerical problems in almost
+every cases of interest (when the length of the observation sequences if
+greater than 50 for instance) despite the double precision representation used
+in MATLAB/OCTAVE.
+
+<P>
+If you don't want to see what's going on you can simply use
+<PRE>
+[A, pi0, mu, Sigma, logl] = hmm(X, A, pi0, mu, Sigma, n_iter);
+</PRE>
+which calls the very same piece of code except for the fact that the messages
+concerning the execution time are suppressed: all the computational functions
+print those messages by default but this can be suppressed by supplying and
+optional argument (named <code>QUIET</code>) different from zero.
+
+<P>
+
+<H3><A NAME="SECTION00032200000000000000">
+Left-right HMM</A>
+</H3>
+This case is not really different from the last one except that the case of
+multiple observation sequences has been considered:
+<PRE>
+for i = 1:n_iter
+  [A, logl(i), gamma] = hmm_mest(X, st, A, mu, Sigma);
+  [mu, Sigma] = mix_par(X, gamma, COV_TYPE);
+end;
+</PRE>
+In this case, the matrix <code>X</code> contains all the observation sequences and
+the vector <code>st</code> yields the index corresponding to the beginning of each
+sequence so that <code>X(1:st(2)-1,:)</code> contains the vectors that correspond to
+the first observation sequence, and so on until
+<code>X(st(length(st)),length(X(1,:),:)</code> which corresponds to the last
+observation sequence.
+
+<P>
+The transition parameters are re-estimated inside <code>hmm_mest</code> and the a
+posteriori distribution of the states are returned in <code>gamma</code>. Once again,
+if you don't want to see what's happening you could more simply use
+<PRE>
+[A, mu, Sigma, logl] = hmm(X, st, A, mu, Sigma, n_iter);
+</PRE>
+
+<P>
+In fact, if you need to estimate the parameter of an ergodic model using
+multiple (independent) observation sequences, you may use <code>hmm_mest</code> as
+well, but <code>hmm_mest</code> assumes that <code>pi0 = [1 0 ... 0]</code> (ie. that the
+Markov chain starts from the first state).
+
+<P>
+
+<H3><A NAME="SECTION00032300000000000000">
+Mixture model</A>
+</H3>
+The EM estimation in the case of mixture model is achieved through
+<PRE>
+for i = 1:n_iter
+  [gamma, logl(i)] = mix_post(X, w, mu, Sigma);
+  [mu, Sigma, w] = mix_par(X, gamma, COV_TYPE);
+end;
+</PRE>
+or, more simply
+<PRE>
+[w, mu, Sigma, logl] = mix(X, w, mu, Sigma, n_iter);
+</PRE>
+
+<P>
+<P><HR>
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html205"
+  HREF="node11.html">Another mixture example: ex_bic</A>
+<B>Up:</B> <A NAME="tex2html201"
+  HREF="node8.html">Models with multivariate Gaussian</A>
+
+<B> Previous:</B> <A NAME="tex2html195"
+  HREF="node9.html">Data structures</A>
+<P>
+
+<!--End of Navigation Panel-->
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>

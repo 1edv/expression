@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>H2M : A set of MATLAB/OCTAVE functions for the EM estimation of mixtures and hidden Markov models</TITLE>
+<META NAME="description" CONTENT="H2M : A set of MATLAB/OCTAVE functions for the EM estimation of mixtures and hidden Markov models">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html13"
+  HREF="node1.html">Contents</A><P>
+
+<!--End of Navigation Panel-->
+<H1 ALIGN=CENTER>H2M : A set of MATLAB/OCTAVE functions for the EM estimation of mixtures and hidden Markov models</H1>
+<P ALIGN=CENTER><STRONG>Olivier Capp&#233;
+<BR>
+ENST dpt. TSI / LTCI (CNRS-URA 820),
+<BR>
+46 rue Barrault, 75634 Paris cedex 13, France.
+<BR>  <TT>cappe</TT> at <TT>tsi.enst.fr</TT></STRONG></P>
+<BR><P ALIGN=CENTER><I>Date:</I> August 24, 2001</P>
+<P ALIGN=LEFT></P>
+
+<P>
+
+ <CENTER><IMG SRC="hamil.gif" ALT="[logo]"></CENTER>
+
+<P>
+<BLOCKQUOTE>
+<B><FONT SIZE="+1">Keywords:</FONT></B> Hidden Markov Model (HMM), Mixture model, Vector
+  Quantization, Expectation-Maximization (EM) algorithm, Multivariate Gaussian
+  distribution, Count data, Poisson distribution, Negative binomial
+  distribution, MATLAB, OCTAVE, GPL
+
+</BLOCKQUOTE>
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"></A>
+
+<UL>
+<LI><A NAME="tex2html14"
+  HREF="node1.html">Contents</A>
+<LI><A NAME="tex2html15"
+  HREF="node2.html">Introduction</A>
+<UL>
+<LI><A NAME="tex2html16"
+  HREF="node3.html">About <TT>H2M</TT></A>
+<LI><A NAME="tex2html17"
+  HREF="node4.html">Current version and changes</A>
+<LI><A NAME="tex2html18"
+  HREF="node5.html">License and warranty</A>
+<LI><A NAME="tex2html19"
+  HREF="node6.html">MATLAB/OCTAVE compatibility</A>
+<LI><A NAME="tex2html20"
+  HREF="node7.html">FAQ</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html21"
+  HREF="node8.html">Models with multivariate Gaussian state conditional distribution</A>
+<UL>
+<LI><A NAME="tex2html22"
+  HREF="node9.html">Data structures</A>
+<LI><A NAME="tex2html23"
+  HREF="node10.html">Simple types: ex_basic</A>
+<UL>
+<LI><A NAME="tex2html24"
+  HREF="node10.html#SECTION00032100000000000000">Ergodic model with full covariance matrices</A>
+<LI><A NAME="tex2html25"
+  HREF="node10.html#SECTION00032200000000000000">Left-right HMM</A>
+<LI><A NAME="tex2html26"
+  HREF="node10.html#SECTION00032300000000000000">Mixture model</A>
+</UL>
+<LI><A NAME="tex2html27"
+  HREF="node11.html">Another mixture example: ex_bic</A>
+<LI><A NAME="tex2html28"
+  HREF="node12.html">A more advance example (sequence recognition with HMM): ex_sprec</A>
+<LI><A NAME="tex2html29"
+  HREF="node13.html">Implementation issues</A>
+<UL>
+<LI><A NAME="tex2html30"
+  HREF="node13.html#SECTION00035100000000000000">Initialization</A>
+<LI><A NAME="tex2html31"
+  HREF="node13.html#SECTION00035200000000000000">Modifications of the EM recursions</A>
+<LI><A NAME="tex2html32"
+  HREF="node13.html#SECTION00035300000000000000">Computation time and memory usage</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html33"
+  HREF="node14.html">The <TT>H2M/cnt</TT> extension: models for scalar count data</A>
+<UL>
+<LI><A NAME="tex2html34"
+  HREF="node15.html">Nomenclature</A>
+<LI><A NAME="tex2html35"
+  HREF="node16.html">Data structures</A>
+<UL>
+<LI><A NAME="tex2html36"
+  HREF="node16.html#SECTION00042100000000000000">Poisson mixture model</A>
+<LI><A NAME="tex2html37"
+  HREF="node16.html#SECTION00042200000000000000">Poisson HMM</A>
+<LI><A NAME="tex2html38"
+  HREF="node16.html#SECTION00042300000000000000">Negative binomial HMM</A>
+<LI><A NAME="tex2html39"
+  HREF="node16.html#SECTION00042400000000000000">Note on the initial distribution of HMMs in <TT>H2M/cnt</TT></A>
+</UL>
+<LI><A NAME="tex2html40"
+  HREF="node17.html">Examples</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html41"
+  HREF="node18.html">Reference</A>
+<UL>
+<LI><A NAME="tex2html42"
+  HREF="node19.html">Functions in the main directory</A>
+<UL>
+<LI><A NAME="tex2html43"
+  HREF="node19.html#SECTION00051100000000000000">Alphabetical list of functions</A>
+<LI><A NAME="tex2html44"
+  HREF="node19.html#SECTION00051200000000000000">Notes</A>
+</UL>
+<LI><A NAME="tex2html45"
+  HREF="node20.html">Functions in the <TT>H2M/cnt</TT> extension</A>
+<UL>
+<LI><A NAME="tex2html46"
+  HREF="node20.html#SECTION00052100000000000000">Alphabetical list of functions</A>
+<LI><A NAME="tex2html47"
+  HREF="node20.html#SECTION00052200000000000000">Notes</A>
+<LI><A NAME="tex2html48"
+  HREF="node20.html#SECTION00052300000000000000">Known problems</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html49"
+  HREF="node21.html">To do</A>
+<LI><A NAME="tex2html50"
+  HREF="node22.html">Downloading <TT>H2M</TT></A>
+<LI><A NAME="tex2html51"
+  HREF="node23.html">Bibliography</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>

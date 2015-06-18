@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>MATLAB/OCTAVE compatibility</TITLE>
+<META NAME="description" CONTENT="MATLAB/OCTAVE compatibility">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node7.html">
+<LINK REL="previous" HREF="node5.html">
+<LINK REL="up" HREF="node2.html">
+<LINK REL="next" HREF="node7.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html148"
+  HREF="node7.html">FAQ</A>
+<B>Up:</B> <A NAME="tex2html144"
+  HREF="node2.html">Introduction</A>
+
+<B> Previous:</B> <A NAME="tex2html138"
+  HREF="node5.html">License and warranty</A>
+<P>
+
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00024000000000000000">
+MATLAB/OCTAVE compatibility</A>
+</H2>
+<TT>H2M</TT> functions where originally developed using MATLAB V4 and then MATLAB
+V5, they will thus run on any currently available version of MATLAB. The only
+exception is the mex-file <code>c_dgaus.c</code> which uses the mex-specific V5
+syntax (the obsolete V4 lines are commented out) - if you are using the MATLAB
+compiler <code>mcc</code> however you shouldn't need that anyway (see
+section&nbsp;<A HREF="node13.html#sec:time+mem">2.5.3</A>).
+
+<P>
+The <TT>H2M</TT> functions have also been tested using
+<A NAME="tex2html1"
+  HREF="http://www.che.wisc.edu/octave/">OCTAVE</A>
+(the GNU
+alternative to MATLAB), version 2.0.13. It basically works as long as you are
+using the <code>--traditional</code> switch. The sub-directory <code>octave</code> contains
+a minimal set of MATLAB compatibility routines needed to run the three examples
+<code>ex_basic</code>, <code>ex_bic</code> and <code>ex_sprec</code> (remember to append this
+sub-directory to your loadpath using the <code>path</code> command if you are using
+OCTAVE). The only significant difference is that OCTAVE does not allow for
+sparse matrices.
+
+<P>
+The <TT>H2M/cnt</TT> functions have been tested under version 2.0.16 of OCTAVE (always
+using the <code>--traditional</code> switch). Note that the simulation routines
+(<code>pm_gen</code>, <code>ph_gen</code> and <code>nbh_gen</code>) do require some functions
+that have been introduced in version 2.0.14 of OCTAVE (<code>poisson_rnd</code> and
+<code>gamma_rnd</code> for simulating random deviates). The <TT>H2M/cnt</TT> functions naturally
+run without problem using MATLAB V5 but you will need the Statistics toolbox
+which contains the <code>poissrnd</code> and <code>gammrnd</code> functions in order for
+the simulation routines to work (see section&nbsp;<A HREF="node20.html#sec:cnt:notes">4.2.2</A> for other
+possible solutions).
+
+<P>
+<P><HR>
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html148"
+  HREF="node7.html">FAQ</A>
+<B>Up:</B> <A NAME="tex2html144"
+  HREF="node2.html">Introduction</A>
+
+<B> Previous:</B> <A NAME="tex2html138"
+  HREF="node5.html">License and warranty</A>
+<P>
+
+<!--End of Navigation Panel-->
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>

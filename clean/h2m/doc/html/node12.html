@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>A more advance example (sequence recognition with HMM): ex_sprec</TITLE>
+<META NAME="description" CONTENT="A more advance example (sequence recognition with HMM): ex_sprec">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node13.html">
+<LINK REL="previous" HREF="node11.html">
+<LINK REL="up" HREF="node8.html">
+<LINK REL="next" HREF="node13.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html232"
+  HREF="node13.html">Implementation issues</A>
+<B>Up:</B> <A NAME="tex2html228"
+  HREF="node8.html">Models with multivariate Gaussian</A>
+
+<B> Previous:</B> <A NAME="tex2html222"
+  HREF="node11.html">Another mixture example: ex_bic</A>
+<P>
+
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00034000000000000000"></A>
+<A NAME="sec:ex_sprec"></A>
+<BR>
+A more advance example (sequence recognition with HMM): ex_sprec
+</H2>
+The script <code>ex_sprec.m</code> contains a more elaborate example of the use of
+<TT>H2M</TT> functions for an isolated words speaker-dependent recognition task
+(with no recording variability). I included this example because it provided a
+simple way of answering most of the question I was asked concerning <TT>H2M</TT> (please, don't ask me about speech recognition anymore!).  <B>I do however
+  insist on the following: (1) <code>ex_sprec.m</code> is not meant to be used for
+  real-world speech recognition (see section <A HREF="node13.html#sec:time+mem">2.5.3</A> on computation
+  time and memory usage), (2) I am not a speech recognition expert and thus
+  cannot answer questions concerning this particular use of <TT>H2M</TT>   functions</B>.
+
+<P>
+This is a very simplistic example where basic models (left-right models with
+five states and a single shared covariance matrix) are sufficient to get rid of
+all errors on a small size training set (which is again not at all typical of
+real-world speech recognition applications). The code is commented so that it
+should not be too difficult to figure out what's going on.
+
+<P>
+If you run into trouble, it will probably happens when reading the signal file
+<code>data/</code> <code>digits.sig</code> which is a binary file contains shorts (16 bits
+signed integers) recorded on a <EM>little-endian</EM> system (PCs running Windows
+or Linux are typically little-endian systems, most Unix workstations are
+big-endian). I have successfully run <code>ex_sprec</code> on various Unix systems
+(little <EM>and</EM> big-endian) using either MATLAB V5 or OCTAVE 2.0, so I hope
+to have cleared all the input/output problems. The script tries to determine
+which of MATLAB or OCTAVE is used so as to add the <code>octave</code> subdirectory
+to the search path if needed.
+
+<P>
+Running <code>ex_sprec</code> requires about 6 Mb of memory, or 15 Mb if you have to
+overwrite the signal file (which is my own stupid way of coping with old
+versions of MATLAB or OCTAVE running on big-endian systems). On my own Linux
+box (Pentium III - 1 GHz hardarwe), the computation time for <code>ex_sprec</code>
+(parameterization, training and recognition) ranges from 48.5 s under OCTAVE to
+9.1 s using MATLAB with all computational routines compiled.
+
+<P>
+<P><HR>
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html232"
+  HREF="node13.html">Implementation issues</A>
+<B>Up:</B> <A NAME="tex2html228"
+  HREF="node8.html">Models with multivariate Gaussian</A>
+
+<B> Previous:</B> <A NAME="tex2html222"
+  HREF="node11.html">Another mixture example: ex_bic</A>
+<P>
+
+<!--End of Navigation Panel-->
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>

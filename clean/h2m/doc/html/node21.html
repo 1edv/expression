@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>To do</TITLE>
+<META NAME="description" CONTENT="To do">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node22.html">
+<LINK REL="previous" HREF="node18.html">
+<LINK REL="up" HREF="h2m.html">
+<LINK REL="next" HREF="node22.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html360"
+  HREF="node22.html">Downloading H2M</A>
+<B>Up:</B> <A NAME="tex2html356"
+  HREF="h2m.html">H2M : A set</A>
+
+<B> Previous:</B> <A NAME="tex2html350"
+  HREF="node20.html">Functions in the H2M/cnt</A>
+<P>
+
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00060000000000000000">
+To do</A>
+</H1>
+<BLOCKQUOTE>
+<B>What follows is a remark that could be useful for people needing to
+    adapt the code to a new type of model rather than an actual wishlist since
+    I don't plan to to this myself at the moment.</B>
+
+</BLOCKQUOTE>
+
+<P>
+If you take a look at the code in <code>nbh_em</code>, <code>ph_em</code> or <code>pm_em</code>
+and compare these with the corresponding functions for multivariate Gaussian
+state conditional distributions (<code>mix</code>, <code>hmm</code>, etc) you will se that
+they are all very similar and that one could indeed develop generic routines
+for EM estimation of mixtures and HMMs. The only model specific elements that
+are needed are
+
+<OL>
+<LI>A routine that compute the density values given the data and the
+  parameters characterizing the different model states (this is done by the
+  function <code>gauseval</code> for multivariate Gaussian distributions).
+</LI>
+<LI>A routine that updates the parameters of the state conditional
+  distributions given the a posteriori state probabilities (this is done by the
+  <code>hmm_dens</code> for multivariate Gaussian distributions). This second
+  function can be somewhat more difficult to implement since one needs to
+  consider the precise form of the EM intermediate quantity, but usually this
+  just boils down to a straightforward modification of the maximum likelihood
+  computation in the corresponding model (see, for instance, the end of
+  <code>pm_em</code> for the case of Poisson distributions).
+</LI>
+</OL>
+Everything else (including the forward-backward recursions and the reestimation
+of the transition matrix and, if needed, of the initial states - that is
+functions such as <code>hmm_fb</code>, <code>hmm_vit</code>, <code>hmm_tran</code> or
+<code>mix_post</code>) is absolutely generic.
+
+<P>
+For doing this with MATLAB/OCTAVE, one would have to use <code>eval</code> statements
+(so as to allow passing the names of the above two routines as parameters) as
+well as variable number of input arguments (since all distributions do not have
+the same number of parameters). The latter could be done easilly in MATLAB
+(starting from V 5) using the <code>varargin</code> construct.
+
+<P>
+<P><HR>
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html360"
+  HREF="node22.html">Downloading H2M</A>
+<B>Up:</B> <A NAME="tex2html356"
+  HREF="h2m.html">H2M : A set</A>
+
+<B> Previous:</B> <A NAME="tex2html350"
+  HREF="node20.html">Functions in the H2M/cnt</A>
+<P>
+
+<!--End of Navigation Panel-->
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>

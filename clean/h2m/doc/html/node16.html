@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Data structures</TITLE>
+<META NAME="description" CONTENT="Data structures">
+<META NAME="keywords" CONTENT="H2M, H2M/cnt, Hidden Markov Model, HMM, Mixture model, Vector Quantization, Expectation Maximization, EM, Multivariate Gaussian, Count data, Poisson, Negative binomial, MATLAB, OCTAVE, GPL">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="h2m.css">
+
+<LINK REL="next" HREF="node17.html">
+<LINK REL="previous" HREF="node15.html">
+<LINK REL="up" HREF="node14.html">
+<LINK REL="next" HREF="node17.html">
+</HEAD>
+
+<BODY BGCOLOR="ivory">
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html288"
+  HREF="node17.html">Examples</A>
+<B>Up:</B> <A NAME="tex2html284"
+  HREF="node14.html">The H2M/cnt extension: models</A>
+
+<B> Previous:</B> <A NAME="tex2html278"
+  HREF="node15.html">Nomenclature</A>
+<P>
+
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html289"
+  HREF="#SECTION00042100000000000000">Poisson mixture model</A>
+<LI><A NAME="tex2html290"
+  HREF="#SECTION00042200000000000000">Poisson HMM</A>
+<LI><A NAME="tex2html291"
+  HREF="#SECTION00042300000000000000">Negative binomial HMM</A>
+<LI><A NAME="tex2html292"
+  HREF="#SECTION00042400000000000000">Note on the initial distribution of HMMs in <TT>H2M/cnt</TT></A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00042000000000000000">
+Data structures</A>
+</H2>
+
+<H3><A NAME="SECTION00042100000000000000">
+Poisson mixture model</A>
+</H3>
+A Poisson mixture models is defined by the two (1-D) arrays:
+<DL>
+<DT><STRONG>wght</STRONG></DT>
+<DD>Mixture weights (positive and sum to 1)
+</DD>
+<DT><STRONG>rate</STRONG></DT>
+<DD>Corresponding rates (parameters of the Poisson distributions)
+</DD>
+</DL>
+
+<P>
+
+<H3><A NAME="SECTION00042200000000000000">
+Poisson HMM</A>
+</H3>
+A Poisson HMM is defined by
+<DL>
+<DT><STRONG>TRANS</STRONG></DT>
+<DD>The transition matrix of the hidden chain
+</DD>
+<DT><STRONG>rate</STRONG></DT>
+<DD>Corresponding rates (parameters of the Poisson distributions)
+</DD>
+</DL>
+
+<P>
+
+<H3><A NAME="SECTION00042300000000000000">
+Negative binomial HMM</A>
+</H3>
+A negative binomial HMM is defined by
+<DL>
+<DT><STRONG>TRANS</STRONG></DT>
+<DD>The transition matrix of the hidden chain
+</DD>
+<DT><STRONG>alpha</STRONG></DT>
+<DD>Corresponding (positive) shape parameters
+</DD>
+<DT><STRONG>beta</STRONG></DT>
+<DD>Corresponding (positive) inverse scales
+</DD>
+</DL>
+where the Negative Binomial distribution is such that
+<!-- MATH
+ \begin{displaymath}
+\operatorname{P}(N = n) = \left(\begin{array}{c} n+\alpha-1\\
+    \alpha-1\end{array}\right) \left(\frac{\beta}{1+\beta}\right)^\alpha
+\left(\frac{1}{1+\beta}\right)^n \qquad \mathrm{for} \quad n \in \mathbb{N}
+\end{displaymath}
+ -->
+<P></P>
+<DIV ALIGN="CENTER">
+<IMG
+ WIDTH="377" HEIGHT="46" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$\displaystyle \operatorname{P}(N = n) = \left(\begin{array}{c} n+\alpha-1\\
+\...
+...pha
+\left(\frac{1}{1+\beta}\right)^n \qquad \mathrm{for} \quad n \in \mathbb{N}$">
+</DIV><P></P>
+which has mean <!-- MATH
+ $\alpha/\beta$
+ -->
+<IMG
+ WIDTH="28" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
+ ALT="$ \alpha/\beta$"> and variance <!-- MATH
+ $\alpha(1+\beta)/\beta^2$
+ -->
+<IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img13.png"
+ ALT="$ \alpha(1+\beta)/\beta^2$">. The
+negative binomial distribution can be viewed as a Poisson (continuous) mixture
+for which the rate follows a <!-- MATH
+ $\operatorname{Gamma}(\alpha, \beta)$
+ -->
+<IMG
+ WIDTH="82" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$ \operatorname{Gamma}(\alpha, \beta)$"> distribution
+(this is the method used for simulating from the model in <code>nbh_gen</code>). If
+you don't know what the negative binomial distribution is, you should refer,
+for instance, to&nbsp;[<A
+ HREF="node23.html#JK69dd">8</A>] or perhaps to&nbsp;[<A
+ HREF="node23.html#Grandell:MixPoisson">9</A>].
+
+<P>
+
+<H3><A NAME="SECTION00042400000000000000">
+Note on the initial distribution of HMMs in <TT>H2M/cnt</TT></A>
+</H3>
+Contrary to what was the case for the <TT>H2M</TT> main functions, the <TT>H2M/cnt</TT> HMM
+functions are mostly intended to deal with ergodic models which are estimated
+from a single long observation sequence (whereas left-right HMMs such as those
+used in speech processing need to be trained using multiple observation
+sequences). With a single (long) training sequence, the initial distribution is
+a parameter that has little influence and that cannot be estimated
+consistently.  Taking this into account, it is assumed that the initial
+distribution (usually called <code>pi0</code> in the <TT>H2M</TT> functions is uniform
+(equal probabilities for all states of the model).
+
+<P>
+<P><HR>
+<!--Navigation Panel-->
+<B> Next:</B> <A NAME="tex2html288"
+  HREF="node17.html">Examples</A>
+<B>Up:</B> <A NAME="tex2html284"
+  HREF="node14.html">The H2M/cnt extension: models</A>
+
+<B> Previous:</B> <A NAME="tex2html278"
+  HREF="node15.html">Nomenclature</A>
+<P>
+
+<!--End of Navigation Panel-->
+<ADDRESS>
+Olivier Capp&#233;, Aug 24 2001
+</ADDRESS>
+</BODY>
+</HTML>
