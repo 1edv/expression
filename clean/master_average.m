@@ -1,12 +1,12 @@
-%SUPERPOSE DATA
+%
 %% Data loading and normalization
 % note that immgen data appear to be standardized to have same
 % distributions across cell lines, and are in "linear" expression units,
 % and have > ~120 is 'on', <45 is 'off', according to: 
 % https://www.immgen.org/Protocols/ImmGen%20QC%20Documentation_ALL-DataGeneration_0612.pdf
 clear all;
-k=4 ;
- 
+k=3 ;
+
 
 [A,B] = xlsread('notchimmgen.xlsx');
 gnames = strtok(B(2:end,2)); % strtok gets rid of spaces
@@ -19,7 +19,7 @@ notches = [8:11];
 %SHAVE OFF THE ZERO COLUMNS 
 dat=dat(:,any(dat));
 
-dat(dat<120)=1;
+%dat(dat<120)=1;
 
 average_dat=dat;
 
@@ -48,19 +48,17 @@ average_dat(5,:) = (dat(14,:) + dat(11,:)) /2 ;
 end
 
 dat  = dat' ;
-dat = normr(dat);
-strong_dat=dat;
-
 average_dat = average_dat';
-average_dat = normr(average_dat);
-dat=average_dat;
+dat = average_dat;
+dat = normr(dat);
+
 
 
 
 
 
 %EM
-idx = emgm(strong_dat',k);
+idx = emgm(dat',k);
 idx = idx';
 %idx = kmeans(dat,k);
 
@@ -81,7 +79,7 @@ dat = dat(:,2:end);
 
 %dat=dat(:,any(~dat)); 
 
-if 1
+
 
 % GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
 indices_change_point = [];
@@ -96,37 +94,13 @@ for j = 1:k
     rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
 end
 % GLYPH PLOT
-end
+
 
 
 
 %%Incorporating Changes in my representation as suggested by Michael
 
-if 0 %%A Little LESS SPACE
-
-dat = zeros(size(dat,1),24);
-
-dat(:,1) = strong_dat(:,4);
-dat(:,2) = strong_dat(:,1);
-
-dat(:,6) = strong_dat(:,2);
-dat(:,7) = strong_dat(:,3);
-dat(:,8) = strong_dat(:,5);
-
-dat(:,12) = strong_dat(:,10);
-dat(:,13) = strong_dat(:,11);
-dat(:,14) = strong_dat(:,9);
-dat(:,15) = strong_dat(:,8);
-
-dat(:,19) = strong_dat(:,6);
-dat(:,20) = strong_dat(:,12);
-dat(:,21) = strong_dat(:,7);
-end
-
-
-
-
-if 0 %%LOTS OF SPACE
+strong_dat=dat;
 
 dat = zeros(size(dat,1),36);
 
@@ -145,12 +119,12 @@ dat(:,21) = strong_dat(:,8);
 dat(:,28) = strong_dat(:,6);
 dat(:,29) = strong_dat(:,12);
 dat(:,30) = strong_dat(:,7);
-end
+
 %THIS IS WORKING !
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot((dat),'standardize','off') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
 %glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
