@@ -21,16 +21,8 @@ dat=dat(:,any(dat));
 
 %dat(dat<120)=1;
 
-average_dat=dat;
+%average_dat=dat;
 
-if 0 % averaging for notchimmgen data
-average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
-average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
-average_dat(3,:) = (dat(6,:)) /1 ;
-average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
-average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
-
-end
 
 
 %
@@ -48,9 +40,9 @@ average_dat(5,:) = (dat(14,:) + dat(11,:)) /2 ;
 end
 
 dat  = dat' ;
-
+strong_dat_actual = dat;
 dat = normr(dat);
-
+strong_dat=dat;
 
 
 
@@ -62,7 +54,7 @@ dat = normr(dat);
 
 %K Means Clustering
 
-idx = kmeans(dat,k);
+idx = kmeans(strong_dat,k);
 
 %
 
@@ -83,29 +75,29 @@ dat = dat(:,2:end);
 
 
 %%Incorporating Changes in my representation as suggested by Michael
-
-strong_dat=dat;
+if 0
+biased_spaced_dat=dat;
 
 dat = zeros(size(dat,1),36);
 
-dat(:,1) = strong_dat(:,4);
-dat(:,2) = strong_dat(:,1);
+dat(:,1) = biased_spaced_dat(:,4);
+dat(:,2) = biased_spaced_dat(:,1);
 
-dat(:,9) = strong_dat(:,2);
-dat(:,10) = strong_dat(:,3);
-dat(:,11) = strong_dat(:,5);
+dat(:,9) = biased_spaced_dat(:,2);
+dat(:,10) = biased_spaced_dat(:,3);
+dat(:,11) = biased_spaced_dat(:,5);
 
-dat(:,18) = strong_dat(:,10);
-dat(:,19) = strong_dat(:,11);
-dat(:,20) = strong_dat(:,9);
-dat(:,21) = strong_dat(:,8);
+dat(:,18) = biased_spaced_dat(:,10);
+dat(:,19) = biased_spaced_dat(:,11);
+dat(:,20) = biased_spaced_dat(:,9);
+dat(:,21) = biased_spaced_dat(:,8);
 
-dat(:,28) = strong_dat(:,6);
-dat(:,29) = strong_dat(:,12);
-dat(:,30) = strong_dat(:,7);
+dat(:,28) = biased_spaced_dat(:,6);
+dat(:,29) = biased_spaced_dat(:,12);
+dat(:,30) = biased_spaced_dat(:,7);
+end
 
-
-
+if 0
 % GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
 indices_change_point = [];
 for i = 1:k
@@ -119,7 +111,19 @@ for j = 1:k
     rep_dat(j,:) = mean(dat(indices_change_point(j):indices_change_point(j+1)-1,:));
 end
 % GLYPH PLOT
+dat = rep_dat';
 
+end
+
+
+if 0% averaging for notchimmgen data
+average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
+average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
+average_dat(3,:) = (dat(6,:)) /1 ;
+average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
+average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
+rep_dat = average_dat';
+end
 
 
 
@@ -128,9 +132,9 @@ end
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','off') ;
 
-glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+%glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
@@ -148,7 +152,7 @@ AIC = zeros(1,20);
 GMModels = cell(1,20);
 options = statset('MaxIter',1000);
 for k = 1:20
-    GMModels{k} = fitgmdist(dat,k,'Options',options,'CovarianceType','full','RegularizationValue',0.01);
+    GMModels{k} = fitgmdist(dat,k,'Options',options,'CovarianceType','full','RegularizationValue',0.001);
     AIC(k)= GMModels{k}.AIC;
 end
 
