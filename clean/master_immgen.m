@@ -19,18 +19,7 @@ notches = [8:11];
 %SHAVE OFF THE ZERO COLUMNS 
 dat=dat(:,any(dat));
 
-%dat(dat<120)=1;
-
-%average_dat=dat;
-
-
-
-%
-
-%dat(dat<120)=1;
-
-
-
+dat(dat<120)=1;
 dat  = dat' ;
 strong_dat_actual = dat;
 dat = normr(dat);
@@ -39,7 +28,8 @@ strong_dat=dat;
 
 
 
-
+%%%%%%%%%%
+%ClUSTERING SECTION
 %EM
 %idx = emgm(dat',k);
 %idx = idx';
@@ -47,15 +37,11 @@ strong_dat=dat;
 %K Medoids
 idx = kmedoids(strong_dat,k);
 
-%
+%%%%%%%%%%%%%%
 
-% PLOT 
 
-%parallelcoords(dat)
 
-%andrewsplot(dat,'group',idx)
-
-%CODE FOR SORTING ACCORDING TO ID - (WHICH MIGHT EVEN BE THE STATE!)
+%CODE FOR SORTING ACCORDING TO ID -
 datforplot=[idx dat];
 dat = sortrows(datforplot);
 %dat=datforplot;
@@ -108,12 +94,13 @@ end
 
 
 if 1% averaging for notchimmgen data
+    dat = dat';
 average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
 average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
 average_dat(3,:) = (dat(6,:)) /1 ;
 average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
 average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
-rep_dat = average_dat';
+dat = average_dat';
 end
 
 
@@ -123,9 +110,9 @@ end
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','off') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
-glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+%glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
