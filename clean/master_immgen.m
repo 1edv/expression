@@ -38,8 +38,20 @@ strong_dat=dat;
 idx = kmedoids(strong_dat,k);
 
 %%%%%%%%%%%%%%
+%
+%silhouette(strong_dat,idx)
+
+%% EVAL Cluster tests
+
+clust = zeros(size(strong_dat,1),10);
+for i=1:10
+clust(:,i) = kmedoids(strong_dat,i);
+end
 
 
+eva = evalclusters(strong_dat,clust,'silhouette') 
+
+%%
 
 %CODE FOR SORTING ACCORDING TO ID -
 datforplot=[idx dat];
@@ -106,18 +118,18 @@ end
 
 
 
-%THIS IS WORKING !
+%%%%%%%%%%%%%%%%%%%%%%%
+%PLOT GLYPHPLOT
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
 %glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
-
-%glyphplot(dat) 
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
