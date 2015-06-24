@@ -19,18 +19,7 @@ notches = [8:11];
 %SHAVE OFF THE ZERO COLUMNS 
 dat=dat(:,any(dat));
 
-%dat(dat<120)=1;
-
-%average_dat=dat;
-
-
-
-%
-
-%dat(dat<120)=1;
-
-
-
+dat(dat<120)=1;
 dat  = dat' ;
 strong_dat_actual = dat;
 dat = normr(dat);
@@ -39,24 +28,22 @@ strong_dat=dat;
 
 
 
-
+%%%%%%%%%%
+%ClUSTERING SECTION
 %EM
 %idx = emgm(dat',k);
 %idx = idx';
 
 %K Medoids
-
 idx = kmedoids(strong_dat,k);
 
+%%%%%%%%%%%%%%
 %
+%silhouette(strong_dat,idx)
 
-% PLOT 
 
-%parallelcoords(dat)
 
-%andrewsplot(dat,'group',idx)
-
-%CODE FOR SORTING ACCORDING TO ID - (WHICH MIGHT EVEN BE THE STATE!)
+%CODE FOR SORTING ACCORDING TO ID -
 datforplot=[idx dat];
 dat = sortrows(datforplot);
 %dat=datforplot;
@@ -109,36 +96,114 @@ end
 
 
 if 1% averaging for notchimmgen data
+    dat = dat';
 average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
 average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
 average_dat(3,:) = (dat(6,:)) /1 ;
 average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
 average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
-rep_dat = average_dat';
+dat = average_dat';
 end
 
 
 
 
-%THIS IS WORKING !
+%%%%%%%%%%%%%%%%%%%%%%%
+%PLOT GLYPHPLOT
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','off') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
-glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+%glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
-
-%glyphplot(dat) 
-
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%% EVAL Cluster tests
+
+for j = 1:100
+    j
+clust = zeros(size(strong_dat,1),10);
+for i=1:10
+clust(:,i) = kmedoids(strong_dat,i);
+end
+eva = evalclusters(strong_dat,clust,'silhouette') ;
+
+CriterionValues(j,:) = eva.CriterionValues ; 
+OptimalK(j) = eva.OptimalK ; 
+end
+
+%%
+
+%%%%%%%%%%%% PLOT THE RESULTS
+figure
+
+
+subplot(2,1,1)
+y= CriterionValues(1:100,:);
+x= repmat(1:100,10,1)' ;
+plot(x,y, ');   % plot with 'DisplayName' property
+title('Cluster Evaluation Criterion is stable over multiple repeated experiments')
+legend('-DynamicLegend','Location','eastoutside') ;       
+gca.Xtick = 1:1:100;
+
+subplot(2,1,2)
+scatter(1:100 , OptimalK(1:100) , 'x')
+ylim([1 10])
+title('Optimal Values of k(number of clusters) is stable over multiple repeated experiments')
+
+%%%%%%%%%%%%
+%%
 
 
 
-%% AIC 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% AIC IS USELESS
 dat=strong_dat;
 shaken_dat = shake(dat,1);
 

@@ -41,17 +41,7 @@ idx = kmedoids(strong_dat,k);
 %
 %silhouette(strong_dat,idx)
 
-%% EVAL Cluster tests
 
-clust = zeros(size(strong_dat,1),10);
-for i=1:10
-clust(:,i) = kmedoids(strong_dat,i);
-end
-
-
-eva = evalclusters(strong_dat,clust,'silhouette') 
-
-%%
 
 %CODE FOR SORTING ACCORDING TO ID -
 datforplot=[idx dat];
@@ -123,7 +113,7 @@ end
 
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
 %glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
@@ -132,11 +122,102 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%% EVAL Cluster tests
+
+for j = 1:100
+    j
+clust = zeros(size(strong_dat,1),10);
+for i=1:10
+clust(:,i) = kmedoids(strong_dat,i);
+end
+eva = evalclusters(strong_dat,clust,'silhouette') ;
+
+CriterionValues(j,:) = eva.CriterionValues ; 
+OptimalK(j) = eva.OptimalK ; 
+end
+
+%%
+
+%%%%%%%%%%%% PLOT THE RESULTS
+figure
+
+legends = {'k=1','k=2','k=3','k=4','k=5','k=6','k=7','k=8','k=9','k=10','Optimal Eval Criteria'};
+
+subplot(2,1,1)
+y= CriterionValues(1:100,:);
+x= repmat(1:100,10,1)' ;
+plot(x,y, '--o');   % plot with 'DisplayName' property
+
+hold on 
+plot(x(:,4),y(:,4), '--o' , 'LineWidth' , 2 , 'color','black');   % plot with 'DisplayName' property
+title('Cluster Evaluation Criterion is stable over multiple repeated experiments')
+legend(legends,'Location','southoutside','Orientation','horizontal') ;
+
+
+xlabel('Repeated Experiment Number');
+ylabel('Cluster Evaluation Criterion Value');
+gca.Xtick = 1:1:100;
+%set(gca,'XGrid','on')
+
+subplot(2,1,2)
+scatter(1:100 , OptimalK(1:100) , 'x' ,'LineWidth',2,'markeredgecolor','black' )
+ylim([1 10])
+title('Optimal Values of k(number of clusters) is stable over multiple repeated experiments')
+xlabel('Repeated Experiment Number');
+ylabel('Optimal Number of Clusters');
+legend('Optimal Number of Clusters for given repeated experiment','Location','southoutside','Orientation','horizontal') ;
+
+%%%%%%%%%%%%
+
+%%
 
 
 
 
-%% AIC 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% AIC IS USELESS
 dat=strong_dat;
 shaken_dat = shake(dat,1);
 
