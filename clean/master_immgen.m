@@ -15,13 +15,15 @@ dat = A(1:end,4:end);
 ligs = 1:5;
 fngs = [6 7 12];
 notches = [8:11];
+%dat(dat<120)=1;
+
 
 %SHAVE OFF THE ZERO COLUMNS 
 dat=dat(:,any(dat));
 
-dat(dat<120)=1;
 dat  = dat' ;
 strong_dat_actual = dat;
+
 dat = normr(dat);
 strong_dat=dat;
 
@@ -34,27 +36,118 @@ strong_dat=dat;
 %idx = emgm(dat',k);
 %idx = idx';
 
+%%%%%%% t-SNE 
+%score = tsne(dat, [], 3, 12,30);
+%dat = score;
+%%%%%%%
+
+
+%%%%%% PCA
+%[pc,score,latent,tsquare] = princomp(dat);
+%dat = score ;
+%%%%%%%
+
+
 %K Medoids
-idx = kmedoids(strong_dat,k);
-
-%%%%%%%%%%%%%%
-%
-%silhouette(strong_dat,idx)
+[idx,C] = kmedoids(dat,k);
 
 
 
+%%%%%%%%%% SORT DATAPOINTS ACCORDING TO CLUSTERS
+dat = strong_dat;
 %CODE FOR SORTING ACCORDING TO ID -
 datforplot=[idx dat];
 dat = sortrows(datforplot);
-%dat=datforplot;
 idx = dat(:,1);
 dat = dat(:,2:end);
+strong_dat_sorted = dat; 
+%%%%%%%%%
 
-%dat=dat(:,any(~dat)); 
+
+%% My 3D scatter representation
+if 0 
+scatter3(dat(:,1),dat(:,2),dat(:,3),100*ones(214,1),idx)
+colormap(lines(4))
+lcolorbar({'1','2','3','4'},'fontweight','bold')
+title('PCA then Cluster - Visualisation of Clusters');
+xlabel('PC 1');
+ylabel('PC 2');
+zlabel('PC 3');
+rotate3d on;
+end
 
 
-%%Incorporating Changes in my representation as suggested by Michael
 if 0
+%%%%% TAKE 2
+[pc,score,latent,tsquare] = princomp(dat);
+scatter3(score(:,1), score(:,2),score(:,3),100*ones(214,1), idx)
+dat = score;
+rotate3d on
+colormap(lines(4))
+lcolorbar({'1','2','3','4'},'fontweight','bold')
+title('PCA then Cluster - Visualisation of Clusters');
+xlabel('PC 1');
+ylabel('PC 2');
+zlabel('PC 3');
+%%%%%
+end
+
+
+
+if 1
+%%%%% TAKE 3
+score = tsne(dat, [], 3, 12,30);
+%scatter3(score(:,1), score(:,2),score(:,3),100*ones(214,1), idx)
+
+gscatter(score(:,1), score(:,2), idx);
+title('(Cluster actual data) -> (t-sne Dimensionality Reduction) -> (Visualisation)');
+xlabel('t-SNE Component 1');
+ylabel('t-SNE Component 2');
+zlabel('Component 3');
+%dat = score;
+
+%%%%%
+end
+
+
+
+
+
+
+
+
+
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Heat Maps
+
+HeatMap(dat','Colormap','winter','RowLabels',B(2:13,2))
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+dat = C;
+%%Incorporating Changes in my representation as suggested by Michael
+if 1
 biased_spaced_dat=dat;
 
 dat = zeros(size(dat,1),36);
@@ -76,6 +169,20 @@ dat(:,29) = biased_spaced_dat(:,12);
 dat(:,30) = biased_spaced_dat(:,7);
 end
 
+
+
+if 0% averaging for notchimmgen data
+%dat = strong_dat_sorted' ;
+average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
+average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
+average_dat(3,:) = (dat(6,:)) /1 ;
+average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
+average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
+dat = average_dat';
+end
+
+
+
 if 0
 % GENERATE REPRESENTATIVE FIGURE FOR EACH CLUSTER
 indices_change_point = [];
@@ -95,35 +202,31 @@ dat = rep_dat';
 end
 
 
-if 1% averaging for notchimmgen data
-    dat = dat';
-average_dat(1,:) = (dat(1,:) + dat(4,:)) /2 ;
-average_dat(2,:) = (dat(2,:) + dat(3,:) + dat(5,:)) /3 ;
-average_dat(3,:) = (dat(6,:)) /1 ;
-average_dat(4,:) = (dat(8,:) + dat(9,:) + dat(10,:) + dat(11,:)) /4 ;
-average_dat(5,:) = (dat(7,:) + dat(12,:)) /2 ;
-dat = average_dat';
-end
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% GLYPH PLOT
 %PLOT GLYPHPLOT
-
 %glyphplot(dat,'obslabels',cellstr(num2str(idx))) ;
 
-glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
+%glyphplot((dat),'obslabels',cellstr(num2str(idx)),'standardize','matrix') ;
 
 %glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+
+glyphplot((dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% EVAL Cluster tests
 
+
+
+
+
+
+
+
+%% EVAL Cluster tests
 for j = 1:100
     j
 clust = zeros(size(strong_dat,1),10);
@@ -138,7 +241,7 @@ end
 
 %%
 
-%%%%%%%%%%%% PLOT THE RESULTS
+%%%%%%%%%%%% PLOT THE RESULTS for Evalclusters
 figure
 
 legends = {'k=1','k=2','k=3','k=4','k=5','k=6','k=7','k=8','k=9','k=10','Optimal Eval Criteria'};
@@ -170,6 +273,11 @@ legend('Optimal Number of Clusters for given repeated experiment','Location','so
 %%%%%%%%%%%%
 
 %%
+
+
+
+
+
 
 
 
