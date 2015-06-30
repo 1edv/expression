@@ -15,16 +15,16 @@ dat = A(1:end,4:end);
 ligs = 1:5;
 fngs = [6 7 12];
 notches = [8:11];
-%dat(dat<120)=1;
+dat(dat<120)=1;
 
 
 %SHAVE OFF THE ZERO COLUMNS 
 dat=dat(:,any(dat));
-
+dat = zscore(dat); %Uncomment If you want to use zscores instead..
 dat  = dat' ;
 strong_dat_actual = dat;
 
-dat = normr(dat);
+%dat = normr(dat); %Comment out if you want to use zscores
 strong_dat=dat;
 
 
@@ -64,6 +64,77 @@ strong_dat_sorted = dat;
 %%%%%%%%%
 
 
+
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Heat Maps
+%hm=HeatMap(dat','Colormap','summer','RowLabels',B(2:13,2),'ColumnLabels',yStrings');
+%plot(hm)
+
+% Rearrange gene labels for plotting
+temp_dat = dat ;
+dat(:,1) = temp_dat(:,10) ;
+dat(:,2) = temp_dat(:,11) ;
+dat(:,3) = temp_dat(:,8) ;
+dat(:,4) = temp_dat(:,9) ;
+dat(:,5) = temp_dat(:,6) ;
+dat(:,6) = temp_dat(:,7) ;
+dat(:,7) = temp_dat(:,12) ;
+dat(:,8) = temp_dat(:,2) ;
+dat(:,9) = temp_dat(:,3) ;
+dat(:,10) = temp_dat(:,5) ;
+dat(:,11) = temp_dat(:,1) ;
+dat(:,12) = temp_dat(:,4) ;
+
+
+temp_B = B;
+B(2,:) = temp_B(11,:) ;
+B(3,:) = temp_B(12,:) ;
+B(4,:) = temp_B(9,:) ;
+B(5,:) = temp_B(10,:) ;
+B(6,:) = temp_B(7,:) ;
+B(7,:) = temp_B(8,:) ;
+B(8,:) = temp_B(13,:) ;
+B(9,:) = temp_B(3,:) ;
+B(10,:) = temp_B(4,:) ;
+B(11,:) = temp_B(6,:) ;
+B(12,:) = temp_B(2,:) ;
+B(13,:) = temp_B(5,:) ;
+
+%
+
+
+imagesc(dat')
+colormap('summer')
+cb = colorbar
+title(cb,'Z-Scores')
+xlabel('Cells sorted according to the cluster assigned')
+title('Heat Map - Immgen Data - KMedoids Clustering')
+ax = gca 
+
+ax.YTick = 1:12
+ax.YTickLabel = B(2:13,2)'
+ax.XTick = [];
+
+
+
+%for finding the change point
+indices_change_point = [];
+for i = 1:k
+    indices_change_point = [ indices_change_point find(idx==i,1)];
+end
+indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
 %% My 3D scatter representation
 if 0 
 scatter3(dat(:,1),dat(:,2),dat(:,3),100*ones(214,1),idx)
@@ -96,9 +167,9 @@ end
 
 if 1
 %%%%% TAKE 3
-score = tsne(dat, [], 3, 12,30);
+score = tsne(dat, [], 2, 12,30);
 %scatter3(score(:,1), score(:,2),score(:,3),100*ones(214,1), idx)
-
+%score = tsne(score, [], 3, 3, 30);
 gscatter(score(:,1), score(:,2), idx);
 title('(Cluster actual data) -> (t-sne Dimensionality Reduction) -> (Visualisation)');
 xlabel('t-SNE Component 1');
@@ -118,16 +189,6 @@ end
 
 
 
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Heat Maps
-
-HeatMap(dat','Colormap','winter','RowLabels',B(2:13,2))
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -211,7 +272,7 @@ end
 
 %glyphplot((rep_dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
-glyphplot((dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
+%glyphplot((dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %glyphplot(rep_dat,'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
@@ -228,7 +289,6 @@ glyphplot((dat),'obslabels',cellstr(num2str((1:k)')),'standardize','off') ;
 
 %% EVAL Cluster tests
 for j = 1:100
-    j
 clust = zeros(size(strong_dat,1),10);
 for i=1:10
 clust(:,i) = kmedoids(strong_dat,i);
@@ -272,61 +332,14 @@ legend('Optimal Number of Clusters for given repeated experiment','Location','so
 
 %%%%%%%%%%%%
 
-%%
 
 
 
 
 
 
+%% SHAKE 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% AIC IS USELESS
-dat=strong_dat;
 shaken_dat = shake(dat,1);
 
 AIC = zeros(1,20);
@@ -355,11 +368,64 @@ shaken_AIC(shaken_AIC==0) = nan;
 figure
 xlabel('k-The number of clusters')
 ylabel('AIC')
-title('Immgen')
+title('1700DC cells')
 hold on
 
 plot(1:size(AIC,2),AIC,'-',1:size(shaken_AIC,2),shaken_AIC,'--')
-legend('real data','scrambled data')
+legend('real data)','scrambled data')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -373,87 +439,6 @@ legend('real data','scrambled data')
 %% DBSCAN Clustering
 
 %[labs labscore] = dbscan(dat,1,1)
-%%
-
-
-
-
-
-%% SCATTER PLOTS
-
-scatter (idx',dat(:,10),'r.')
-hold on;
-scatter (idx',dat(:,2),'go')
-hold on;
-scatter (idx',dat(:,5),'bx')
-hold on;
-scatter (idx',dat(:,12),'bo')
-hold on;
-scatter (idx',dat(:,4),'rx')
-
-
-%%
-%% EM
-obj = fitgmdist(dat,2);
-
-
-
-mindat = min(min(dat))-1;
-
-[Jag2,Dll1,Dll4,Jag1,Dll3,Rfng,Mfng,Notch4,Notch3,Notch1,Notch2,Lfng]=deal(1,2,3,4,5,6,7,8,9,10,11,12);
-
-cgo_all = clustergram(dat,'Standardize','column','RowLabels',gnames,'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
-
-cgo_all = clustergram(log(dat),'Standardize','column','RowLabels',gnames,'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
-
-cgo_receptors = clustergram(dat(notches,:),'Standardize','column','RowLabels',gnames(notches),'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
-cgo_ligs = clustergram(log(dat(ligs,:)-mindat),'Standardize','column','RowLabels',gnames(ligs),'DisplayRange',1.5,'Symmetric','false','Colormap',redbluecmap);
-
-%% Plot the relationship between Notch1 and Notch2.
-
-figure(101);
-loglog(dat(Notch1,:),dat(Notch2,:),'.',dat(Notch1,:),dat(Notch3,:),'o',dat(Notch1,:),dat(Notch4,:),'.');
-a = axis;
-hl(1)=line([120 120],[a(3) a(4)]);
-hl(2)=line([a(1) a(2)],[120 120]);
-
-xlabel('Notch1');
-legend('Notch2','Notch3','Notch4');
-
-
-% now let's do histograms of each notch:
-
-bins = logspace(1.5,4,40);
-figure(102);
-colors = 'bgrmcyk';
-for i = 1:4
-    [yn{i},xn{i}]=hist(dat(notches(i),:),bins);
-    semilogx(xn{i},yn{i},colors(i));hold on
-end
-legend(gnames(notches))
-hold off;
-
-% now let's do histograms of fringes:
-
-figure(103);
-for i = 1:3
-    [yn{i},xn{i}]=hist(dat(fngs(i),:),bins);
-    semilogx(xn{i},yn{i},colors(i));hold on
-end
-legend(gnames(fngs))
-hold off;
-
-figure(104);
-for i = 1:5
-    [yn{i},xn{i}]=hist(dat(ligs(i),:),bins);
-    semilogx(xn{i},yn{i},colors(i));hold on
-end
-legend(gnames(ligs))
-hold off;
-
-
-
-
 %%
 
 
