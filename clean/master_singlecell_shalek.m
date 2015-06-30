@@ -69,34 +69,40 @@ strong_dat_sorted = dat;
 %plot(hm)
 
 % Rearrange gene labels for plotting
-if 0
+if 1
 temp_dat = dat ;
-dat(:,1) = temp_dat(:,10) ;
-dat(:,2) = temp_dat(:,11) ;
-dat(:,3) = temp_dat(:,8) ;
-dat(:,4) = temp_dat(:,9) ;
-dat(:,5) = temp_dat(:,6) ;
+dat(:,1) = temp_dat(:,1) ;
+dat(:,2) = temp_dat(:,6) ;
+dat(:,3) = temp_dat(:,10) ;
+dat(:,4) = temp_dat(:,4) ;
+dat(:,5) = temp_dat(:,12) ;
 dat(:,6) = temp_dat(:,7) ;
-dat(:,7) = temp_dat(:,12) ;
-dat(:,8) = temp_dat(:,2) ;
-dat(:,9) = temp_dat(:,3) ;
-dat(:,10) = temp_dat(:,5) ;
-dat(:,11) = temp_dat(:,1) ;
-dat(:,12) = temp_dat(:,4) ;
+dat(:,7) = temp_dat(:,13) ;
+dat(:,8) = temp_dat(:,11) ;
+dat(:,9) = temp_dat(:,14) ;
+dat(:,10) = temp_dat(:,9) ;
+dat(:,11) = temp_dat(:,5) ;
+dat(:,12) = temp_dat(:,8) ;
+dat(:,13) = temp_dat(:,2) ;
+dat(:,14) = temp_dat(:,3) ;
+
 
 temp_B = B;
-B(2,:) = temp_B(11,:) ;
-B(3,:) = temp_B(12,:) ;
-B(4,:) = temp_B(9,:) ;
-B(5,:) = temp_B(10,:) ;
-B(6,:) = temp_B(7,:) ;
+B(2,:) = temp_B(2,:) ;
+B(3,:) = temp_B(7,:) ;
+B(4,:) = temp_B(11,:) ;
+B(5,:) = temp_B(5,:) ;
+B(6,:) = temp_B(13,:) ;
 B(7,:) = temp_B(8,:) ;
-B(8,:) = temp_B(13,:) ;
-B(9,:) = temp_B(3,:) ;
-B(10,:) = temp_B(4,:) ;
-B(11,:) = temp_B(6,:) ;
-B(12,:) = temp_B(2,:) ;
-B(13,:) = temp_B(5,:) ;
+B(8,:) = temp_B(14,:) ;
+B(9,:) = temp_B(12,:) ;
+B(10,:) = temp_B(15,:) ;
+B(11,:) = temp_B(10,:) ;
+B(12,:) = temp_B(6,:) ;
+B(13,:) = temp_B(9,:) ;
+B(14,:) = temp_B(3,:) ;
+B(15,:) = temp_B(4,:) ;
+
 end
 %
 
@@ -104,9 +110,9 @@ end
 imagesc(dat')
 colormap('summer')
 cb = colorbar
-title(cb,'Z-Scores')
-xlabel('Cells sorted according to the cluster assigned')
-title('Heat Map - 1700 DC Cells - KMedoids Clustering')
+title(cb,'Z-Scores','FontSize', 10)
+xlabel('Cells sorted according to the cluster assigned','FontSize', 15)
+title('Heat Map - 1700 DC Cells - KMedoids Clustering','FontSize', 20)
 ax = gca 
 
 ax.YTick = 1:14
@@ -134,36 +140,40 @@ indices_change_point(i+1) = size(dat,1)+1; % for rep_dat loop to be easy
 
 %% My 3D scatter representation
 
-if 1
+if 0
 %%%%% TAKE 2
 [pc,score,latent,tsquare] = princomp(dat);
-gscatter(score(:,1), score(:,2), idx);
+%gscatter(score(:,1), score(:,2), idx);
+scatter(score(:,1), score(:,2),50*ones(1642,1) ,idx,'filled');
 
-%scatter3(score(:,1), score(:,2),score(:,3),100*ones(1642,1), idx)
+%scatter3(score(:,1), score(:,2),score(:,3),50*ones(1642,1), idx,'filled')
 rotate3d on
 colormap(lines(4))
 lcolorbar({'1','2','3','4'},'fontweight','bold')
-title('PCA then Cluster - Visualisation of Clusters');
-xlabel('PC 1');
-ylabel('PC 2');
-zlabel('PC 3');
+title('PCA','FontSize', 20);
+xlabel('PC 1','FontSize', 15);
+ylabel('PC 2','FontSize', 15);
+zlabel('PC 3','FontSize', 15);
 %%%%%
 end
 
 
 
-if 0
+if 1
 
 %%%%% TAKE 3
 score = tsne(dat, idx, 2, 14,1200);
 %score = fast_tsne(dat, 2 , 14, 50,0.5)
 %scatter3(score(:,1), score(:,2),score(:,3),10*ones(1642,1), idx)
 %score = tsne(score, [], 3, 3, 30);
-gscatter(score(:,1), score(:,2), idx);
-title('(Cluster actual data) -> (t-sne Dimensionality Reduction) -> (Visualisation)');
-xlabel('t-SNE Component 1');
-ylabel('t-SNE Component 2');
+scatter(score(:,1), score(:,2), 50*ones(1642,1) ,idx,'filled');
+title('(Cluster actual data) -> (t-sne Dimensionality Reduction) -> (Visualisation)','FontSize',20);
+xlabel('t-SNE Component 1','FontSize',20);
+ylabel('t-SNE Component 2','FontSize',20);
 zlabel('Component 3');
+colormap(lines(4))
+lcolorbar({'1','2','3','4'},'fontweight','bold')
+
 %dat = score;
 
 %%%%%
@@ -195,9 +205,8 @@ end
 
 
 %%
-dat = C;
 %%Incorporating Changes in my representation as suggested by Michael
-if 1
+if 0
 biased_spaced_dat=dat;
 
 dat = zeros(size(dat,1),36);
@@ -274,20 +283,50 @@ end
 
 
 
-
-
 %% EVAL Cluster tests
-for j = 1:10
-clust = zeros(size(strong_dat,1),10);
+dat = strong_dat;
+shaken_dat = shake(dat,2);
+
+for j = 1:5
+clust = zeros(size(dat,1),10);
 for i=1:10
-clust(:,i) = kmedoids(strong_dat,i);
+clust(:,i) = kmedoids(dat,i);
 end
-eva = evalclusters(strong_dat,clust,'silhouette') ;
+eva = evalclusters(dat,clust,'silhouette') ;
 
 CriterionValues(j,:) = eva.CriterionValues ; 
 OptimalK(j) = eva.OptimalK ; 
 end
 
+
+%%%%%SHAKING
+dat = shaken_dat;
+for j = 1:5
+clust = zeros(size(dat,1),10);
+for i=1:10
+clust(:,i) = kmedoids(dat,i);
+end
+eva = evalclusters(dat,clust,'silhouette') ;
+
+shaken_CriterionValues(j,:) = eva.CriterionValues ; 
+shaken_OptimalK(j) = eva.OptimalK ; 
+end
+%%%%%%
+%% BOXPLOT for EVALCLUSTERS
+
+
+
+data = [CriterionValues shaken_CriterionValues];
+month = repmat({'' 'k=2' 'k=3' 'k=4 ' 'k=5' 'k=6' 'k=7' 'k=8' 'k=9' 'k=10' },1,2);
+simobs = [repmat({'Real'},1,10),repmat({'Scrambled'},1,10)];
+boxplot(data,{month,simobs},'colors',repmat('br',1,10),'factorgap',[5 2],'labelverbosity','major');
+%hline = refline([0 CriterionValues(4,4)]);
+%hline.Color = 'black';
+title('Cluster Evaluation Criterion | Stability over multiple repeated experiments | Control/Null Hypothesis');
+ylabel('Cluster Evaluation Criterion - Sillhouette');
+xlabel('Number of Clusters(k) | Comparing Real Data and Scrambled Data');
+grid on
+%set(gca, 'YTick', [0 1])
 %%
 
 %%%%%%%%%%%% PLOT THE RESULTS for Evalclusters
@@ -328,7 +367,7 @@ legend('Optimal Number of Clusters for given repeated experiment','Location','so
 
 
 %% SHAKE 
-
+dat = strong_dat;
 shaken_dat = shake(dat,1);
 
 AIC = zeros(1,20);
