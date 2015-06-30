@@ -98,14 +98,18 @@ function ydata = tsne_p(P, labels, no_dims)
         if ~rem(iter, 10) && ~isempty(labels)
             if no_dims == 1
                 scatter(ydata, ydata, 9, labels, 'filled');
+
             elseif no_dims == 2
                 scatter(ydata(:,1), ydata(:,2), 9, labels, 'filled');
+
             else
                 scatter3(ydata(:,1), ydata(:,2), ydata(:,3), 40, labels, 'filled');
+
             end
             axis tight
             axis off
             drawnow
+
         end
     end
     
