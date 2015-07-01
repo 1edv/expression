@@ -284,7 +284,7 @@ end
 
 %% EVAL Cluster tests
 dat = strong_dat;
-shaken_dat = shake(dat,1);
+shaken_dat = shake(dat,2);
 
 for j = 1:10
 clust = zeros(size(dat,1),10);
@@ -321,9 +321,9 @@ simobs = [repmat({'Real'},1,10),repmat({'Scrambled'},1,10)];
 boxplot(data,{month,simobs},'colors',repmat('br',1,10),'factorgap',[5 2],'labelverbosity','major');
 %hline = refline([0 CriterionValues(4,4)]);
 %hline.Color = 'black';
-title('Cluster Evaluation Criterion | Stability over multiple repeated experiments | Control/Null Hypothesis');
-ylabel('Cluster Evaluation Criterion - Sillhouette');
-xlabel('Number of Clusters(k) | Comparing Real Data and Scrambled Data');
+title('Cluster Evaluation Criterion | Stability over multiple repeated experiments | Control/Null Hypothesis','FontSize',20);
+ylabel('Cluster Evaluation Criterion - Sillhouette','FontSize',15);
+xlabel('Number of Clusters(k) | Comparing Real Data and Scrambled Data','FontSize',15);
 grid on
 %set(gca, 'YTick', [0 1])
 %%
